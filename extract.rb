@@ -1,4 +1,5 @@
 #!/usr/bin/env ruby
+#encoding: UTF-8
 
 $:.unshift('lib')
 require 'postal_code_range_extractor'
@@ -14,4 +15,20 @@ end
 data = CSV.read(ARGV[0])
 data.collect! { |row| [row[0]  ? row[0].split(' ').join.to_i : nil, row[1]] }
 
-pp Extractor.extract(data)
+ranges = Extractor.extract(data)
+
+# Customize
+abbr_to_name = {
+  'BL' => 'Bratislavský kraj',
+  'TA' => 'Trnavský kraj',
+  'TC' => 'Trenčiansky kraj',
+  'NI' => 'Nitriansky kraj',
+  'ZI' => 'Žilinský kraj',
+  'BC' => 'Banskobystrický kraj',
+  'PV' => 'Prešovský kraj',
+  'KI' => 'Košický kraj'
+}
+
+abbr_to_name.each { |abbr, name| ranges[name] = ranges.delete(abbr) if ranges[abbr] }
+
+pp ranges
