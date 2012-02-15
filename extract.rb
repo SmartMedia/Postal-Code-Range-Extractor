@@ -32,3 +32,21 @@ abbr_to_name = {
 abbr_to_name.each { |abbr, name| ranges[name] = ranges.delete(abbr) if ranges[abbr] }
 
 pp ranges
+
+puts "\nIntegrity check:"
+
+data.each do |(code, region)|
+  # Find range for given code
+  region = abbr_to_name[region] || region
+  matched_regions = []
+  ranges.each do |region, rngs|
+    rngs.each do |range|
+      matched_regions << region if range.include?(code)
+    end
+  end
+
+  unless matched_regions == [region]
+    matched_regions.map! { |r| abbr_to_name[r] || r }
+    puts "For code #{code}: expected #{region}, but found #{matched_regions.join(', ')}"
+  end
+end
