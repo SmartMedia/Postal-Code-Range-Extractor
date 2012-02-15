@@ -6,6 +6,9 @@ require 'postal_code_range_extractor'
 require 'csv'
 require 'pp'
 
+# Set to true, if you want to use our matching lib
+CUSTOM_FORMAT = false
+
 if ARGV.length != 1
   puts 'Usage: extract.rb postal_codes.csv'
   puts 'CSV format: comma separator and two columns: postal code, district name'
@@ -31,7 +34,15 @@ abbr_to_name = {
 
 abbr_to_name.each { |abbr, name| ranges[name] = ranges.delete(abbr) if ranges[abbr] }
 
-pp ranges
+if CUSTOM_FORMAT
+  ranges.each do |region, ranges|
+    ranges.each do |range|
+      puts "self.add_region('SK', '#{region}', #{range.min}, #{range.max})"
+    end
+  end
+else
+  pp ranges
+end
 
 puts "\nIntegrity check:"
 
